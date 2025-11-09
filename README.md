@@ -11,7 +11,9 @@
 
 **Seize**は、統一エージェント方程式に基づいた次世代AIエージェントフレームワークです。
 
-**NEW**: システムズエンジニアリングおよび要求工学（ISO/IEC/IEEE 29148準拠）を完全実装！
+**NEW**:
+- システムズエンジニアリングおよび要求工学（ISO/IEC/IEEE 29148準拠）を完全実装！
+- **Web UI**: 人間とAIの1on1インタラクションを可視化するグラフィカルインターフェース ⭐NEW
 
 ### 統一エージェント方程式
 
@@ -70,6 +72,24 @@ seize formula
 seize init --format pretty
 ```
 
+#### Web UI（推奨）⭐NEW
+
+```bash
+# Web UIを起動
+cd web
+npm install
+npm run dev
+
+# ブラウザで http://localhost:3000 を開く
+```
+
+**特徴**:
+- グラフィカルな状態遷移の可視化（React Flow）
+- 1on1チャットインターフェース
+- リアルタイムでエージェントの状態を表示
+- 「瞬く景色」を体感
+- **🎬 ECサイト認証機能改善デモ**: サンプルプロジェクトを自動再生可能
+
 #### 要求工学の使用
 
 ```bash
@@ -109,22 +129,34 @@ seize/
 │   │   │   ├── command.rs    # 𝒞: コマンドスタック
 │   │   │   ├── transformation.rs # Θ: 世界変換
 │   │   │   ├── agent.rs      # 統一エージェント
-│   │   │   └── requirements.rs # 要求工学モジュール ⭐NEW
+│   │   │   └── requirements.rs # 要求工学モジュール
 │   │   └── Cargo.toml
 │   └── seize-cli/            # CLIインターフェース
 │       ├── src/
 │       │   ├── main.rs
-│       │   └── requirements_handler.rs # 要求コマンドハンドラー ⭐NEW
+│       │   └── requirements_handler.rs # 要求コマンドハンドラー
 │       └── Cargo.toml
+├── web/                       # Web UI ⭐NEW
+│   ├── src/
+│   │   ├── components/       # Reactコンポーネント
+│   │   │   ├── GraphView.tsx # グラフ可視化（React Flow）
+│   │   │   ├── ChatInterface.tsx # 1on1チャット
+│   │   │   └── AgentStatePanel.tsx # エージェント状態
+│   │   ├── types/            # 型定義
+│   │   └── App.tsx
+│   ├── package.json
+│   └── README.md
+├── examples/                  # サンプルプロジェクト
+│   └── ecommerce-auth/       # ECサイト認証サンプル
 ├── .claude/                   # Claude Code統合
 │   ├── agents/
 │   │   ├── seize-agent.md    # 統一エージェント専門家
-│   │   └── systems-engineer.md # システムズエンジニア専門家 ⭐NEW
+│   │   └── systems-engineer.md # システムズエンジニア専門家
 │   └── commands/
 │       ├── seize-build.md
 │       └── seize-doc.md
 └── docs/
-    ├── YOUR_DESIGN.md        # 要求工学実践ガイド ⭐NEW
+    ├── YOUR_DESIGN.md        # 要求工学実践ガイド
     ├── QUICKSTART.md
     └── ...
 ```
