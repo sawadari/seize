@@ -32,8 +32,8 @@ The Mahjong AI 3D web interface demonstrates a solid foundation with impressive 
 
 ### Issue 1: Type Safety Violations
 **Files**:
-- `/Users/shunsuke/Dev/AI_Agent/ui/src/components/MahjongTable.tsx:8`
-- `/Users/shunsuke/Dev/AI_Agent/ui/src/App.tsx:6-27`
+- `/devb/seize/ui/src/components/MahjongTable.tsx:8`
+- `/devb/seize/ui/src/App.tsx:6-27`
 
 **Problem**: The `gameState` prop uses `any` type, and interfaces are duplicated across files without a shared type definition.
 
@@ -47,7 +47,7 @@ The Mahjong AI 3D web interface demonstrates a solid foundation with impressive 
 
 **Code Example**:
 ```typescript
-// Create: /Users/shunsuke/Dev/AI_Agent/ui/src/types/game.ts
+// Create: /devb/seize/ui/src/types/game.ts
 export interface Tile {
   type: 'man' | 'pin' | 'sou' | 'wind' | 'dragon' | 'back'
   value: number
@@ -180,8 +180,8 @@ function GameControls({ onRiichi, onTsumo, onRon, canRiichi, canTsumo, canRon }:
 
 ### Issue 3: Missing Error Boundaries and Error Handling
 **Files**:
-- `/Users/shunsuke/Dev/AI_Agent/ui/src/App.tsx` (entire component)
-- `/Users/shunsuke/Dev/AI_Agent/ui/src/services/arkApi.ts:26-57`
+- `/devb/seize/ui/src/App.tsx` (entire component)
+- `/devb/seize/ui/src/services/arkApi.ts:26-57`
 
 **Problem**:
 - No React Error Boundary to catch render errors
@@ -199,7 +199,7 @@ function GameControls({ onRiichi, onTsumo, onRon, canRiichi, canTsumo, canRon }:
 
 **Code Example**:
 ```typescript
-// Create: /Users/shunsuke/Dev/AI_Agent/ui/src/components/ErrorBoundary.tsx
+// Create: /devb/seize/ui/src/components/ErrorBoundary.tsx
 import { Component, ReactNode } from 'react'
 
 interface Props {
@@ -300,7 +300,7 @@ if (error) {
 ---
 
 ### Issue 4: Missing Font File Reference
-**Files**: `/Users/shunsuke/Dev/AI_Agent/ui/src/components/MahjongTile3D.tsx:91`
+**Files**: `/devb/seize/ui/src/components/MahjongTile3D.tsx:91`
 
 **Problem**: Component references `/fonts/NotoSansJP-Bold.ttf` which doesn't exist in the project, causing tile text to fail rendering or use fallback fonts inconsistently.
 
@@ -334,7 +334,7 @@ if (error) {
 
 // Option 2: Download and serve locally
 // 1. Download font from Google Fonts
-// 2. Place in /Users/shunsuke/Dev/AI_Agent/ui/public/fonts/
+// 2. Place in /devb/seize/ui/public/fonts/
 // 3. Update reference to "/fonts/NotoSansJP-Bold.woff2"
 
 // Option 3: Preload fonts for better performance
@@ -350,8 +350,8 @@ export default defineConfig({
 
 ### Issue 5: Hardcoded Magic Numbers and Layout Issues
 **Files**:
-- `/Users/shunsuke/Dev/AI_Agent/ui/src/components/MahjongTable.tsx:36-89`
-- `/Users/shunsuke/Dev/AI_Agent/ui/src/components/CenterScoreBoard.tsx:137-141`
+- `/devb/seize/ui/src/components/MahjongTable.tsx:36-89`
+- `/devb/seize/ui/src/components/CenterScoreBoard.tsx:137-141`
 
 **Problem**:
 - Tile positions calculated with magic numbers (`0.9`, `6.5`, `8`, etc.)
@@ -369,7 +369,7 @@ export default defineConfig({
 
 **Code Example**:
 ```typescript
-// Create: /Users/shunsuke/Dev/AI_Agent/ui/src/constants/layout.ts
+// Create: /devb/seize/ui/src/constants/layout.ts
 export const TILE_DIMENSIONS = {
   WIDTH: 0.7,
   HEIGHT: 1.0,
@@ -432,7 +432,7 @@ export const getResponsiveLayout = (viewportWidth: number) => {
 ---
 
 ### Issue 6: No Loading States for 3D Assets
-**Files**: `/Users/shunsuke/Dev/AI_Agent/ui/src/components/MahjongTable.tsx`
+**Files**: `/devb/seize/ui/src/components/MahjongTable.tsx`
 
 **Problem**:
 - 3D scene loads without showing progress
@@ -632,7 +632,7 @@ function MahjongTable({ gameState, onDiscard }: Props) {
 ## Improvements (Medium Priority)
 
 ### Issue 8: Poor Color Contrast in Player Info
-**Files**: `/Users/shunsuke/Dev/AI_Agent/ui/src/components/MahjongTable.css:32-35`
+**Files**: `/devb/seize/ui/src/components/MahjongTable.css:32-35`
 
 **Problem**: Gray text (`#aaa`) on dark semi-transparent background (`rgba(0,0,0,0.8)`) has insufficient contrast ratio.
 
@@ -660,7 +660,7 @@ function MahjongTable({ gameState, onDiscard }: Props) {
 ---
 
 ### Issue 9: Inconsistent State Management
-**Files**: `/Users/shunsuke/Dev/AI_Agent/ui/src/App.tsx:30-32`
+**Files**: `/devb/seize/ui/src/App.tsx:30-32`
 
 **Problem**:
 - Multiple related state variables (`gameState`, `loading`, `connected`)
@@ -677,7 +677,7 @@ function MahjongTable({ gameState, onDiscard }: Props) {
 **Solution**: Use a state machine or reducer pattern.
 
 ```typescript
-// Create: /Users/shunsuke/Dev/AI_Agent/ui/src/hooks/useGameState.ts
+// Create: /devb/seize/ui/src/hooks/useGameState.ts
 import { useReducer, useEffect } from 'react'
 import { GameState } from '../types/game'
 
@@ -761,7 +761,7 @@ function App() {
 ---
 
 ### Issue 10: No Tile Interaction Feedback
-**Files**: `/Users/shunsuke/Dev/AI_Agent/ui/src/components/MahjongTile3D.tsx:15-27`
+**Files**: `/devb/seize/ui/src/components/MahjongTile3D.tsx:15-27`
 
 **Problem**:
 - Hover animation is subtle
@@ -878,7 +878,7 @@ function MahjongTile3D({
 ---
 
 ### Issue 11: Missing Game State Persistence
-**Files**: `/Users/shunsuke/Dev/AI_Agent/ui/src/App.tsx`
+**Files**: `/devb/seize/ui/src/App.tsx`
 
 **Problem**:
 - Game state lost on page refresh
@@ -895,7 +895,7 @@ function MahjongTile3D({
 **Solution**: Implement localStorage persistence and reconnection.
 
 ```typescript
-// Create: /Users/shunsuke/Dev/AI_Agent/ui/src/utils/persistence.ts
+// Create: /devb/seize/ui/src/utils/persistence.ts
 import { GameState } from '../types/game'
 
 const STORAGE_KEY = 'mahjong_game_state'
@@ -1001,7 +1001,7 @@ useEffect(() => {
 ---
 
 ### Issue 12: No Visual Feedback for Game Actions
-**Files**: `/Users/shunsuke/Dev/AI_Agent/ui/src/components/GameControls.tsx`
+**Files**: `/devb/seize/ui/src/components/GameControls.tsx`
 
 **Problem**:
 - Buttons don't show when they become available
@@ -1018,7 +1018,7 @@ useEffect(() => {
 **Solution**: Add notification system and action confirmations.
 
 ```typescript
-// Create: /Users/shunsuke/Dev/AI_Agent/ui/src/components/NotificationToast.tsx
+// Create: /devb/seize/ui/src/components/NotificationToast.tsx
 import { useEffect, useState } from 'react'
 
 interface Notification {

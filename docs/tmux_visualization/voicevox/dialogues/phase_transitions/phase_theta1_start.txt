@@ -1,9 +1,0 @@
-# EVENT: phase_theta1_start
-# PHASE: θ₁ Understand - 理解フェーズ開始
-# DURATION: ~10s
-
-REIMU: ねぇねぇ魔理沙、何か始まったよ！
-MARISA: おっ、θ₁の理解フェーズだぜ。ユーザーの意図を分析してるんだ
-REIMU: へぇ〜、何を理解するの？
-MARISA: 「何をしたいか」「どう実現するか」を読み取るんだぜ
-REIMU: すごーい！頭いいんだね！

@@ -28,7 +28,7 @@ vercel login
 
 ```bash
 # Navigate to project root
-cd /Users/shunsuke/Dev/AI_Agent
+cd /devb/seize
 
 # Deploy (first time)
 vercel
@@ -68,7 +68,7 @@ git add .
 git commit -m "Add Claude Code detail control documentation"
 
 # Create GitHub repo and push
-git remote add origin https://github.com/YOUR_USERNAME/AI_Agent.git
+git remote add origin https://github.com/YOUR_USERNAME/SEIZE.git
 git push -u origin main
 ```
 
@@ -76,7 +76,7 @@ git push -u origin main
 
 1. Go to [vercel.com/new](https://vercel.com/new)
 2. Click "Import Git Repository"
-3. Select your `AI_Agent` repository
+3. Select your `SEIZE` repository
 4. Configure:
    - **Framework Preset**: Other
    - **Root Directory**: `./`
@@ -99,7 +99,7 @@ git push -u origin main
 
 ```bash
 # Create a deployment package
-cd /Users/shunsuke/Dev/AI_Agent
+cd /devb/seize
 zip -r docs-deployment.zip docs/ vercel.json
 ```
 

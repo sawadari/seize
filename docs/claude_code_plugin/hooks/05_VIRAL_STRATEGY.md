@@ -103,7 +103,7 @@ class ScreenRecordingDetector {
     // Add watermark with GitHub link
     await this.addWatermark({
       text: '⚡ Flickering Scenery',
-      link: 'github.com/ShunsukeHayashi/AI_Agent',
+      link: 'github.com/ShunsukeHayashi/SEIZE',
       position: 'bottom-right',
     });
   }
@@ -150,7 +150,7 @@ class ShareHelper {
     );
 
     const url = encodeURIComponent(
-      'https://github.com/ShunsukeHayashi/AI_Agent'
+      'https://github.com/ShunsukeHayashi/SEIZE'
     );
 
     vscode.env.openExternal(
@@ -169,7 +169,7 @@ class ShareHelper {
     );
 
     const url = encodeURIComponent(
-      'https://github.com/ShunsukeHayashi/AI_Agent'
+      'https://github.com/ShunsukeHayashi/SEIZE'
     );
 
     vscode.env.openExternal(
@@ -184,7 +184,7 @@ class ShareHelper {
    */
   async copyShareableLink(source: string): Promise<void> {
     const link =
-      'https://github.com/ShunsukeHayashi/AI_Agent' +
+      'https://github.com/ShunsukeHayashi/SEIZE' +
       `?utm_source=${source}&utm_medium=social&utm_campaign=auto_launch`;
 
     await vscode.env.clipboard.writeText(link);
@@ -287,7 +287,7 @@ class GitHubStarCounter {
   private async fetchStarCount(): Promise<number> {
     try {
       const response = await fetch(
-        'https://api.github.com/repos/ShunsukeHayashi/AI_Agent'
+        'https://api.github.com/repos/ShunsukeHayashi/SEIZE'
       );
       const data = await response.json();
       return data.stargazers_count;
@@ -353,7 +353,7 @@ const REFERRAL_TIERS: ReferralReward[] = [
 
 class ReferralTracker {
   async generateReferralLink(userId: string): Promise<string> {
-    return `https://github.com/ShunsukeHayashi/AI_Agent?ref=${userId}`;
+    return `https://github.com/ShunsukeHayashi/SEIZE?ref=${userId}`;
   }
 
   async trackReferral(referrer: string): Promise<void> {
@@ -641,7 +641,7 @@ This is the first plugin I've seen that makes agent orchestration *visible*. It 
 
 ## Links
 
-- [GitHub](https://github.com/ShunsukeHayashi/AI_Agent)
+- [GitHub](https://github.com/ShunsukeHayashi/SEIZE)
 - [VSCode Marketplace](#)
 - [Demo Video](#)
 

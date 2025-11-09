@@ -1,9 +1,0 @@
-# EVENT: error_timeout
-# ERROR: タイムアウト発生
-# DURATION: ~8s
-
-REIMU: ねぇ、ずっと待ってるけど…
-MARISA: タイムアウトだな。ちょっと時間かかりすぎたぜ
-REIMU: もう無理なの？
-MARISA: いや、もう一回やり直すだけだ。今度は速いはずだぜ
-REIMU: そっか、頑張って！

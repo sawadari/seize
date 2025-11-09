@@ -12,7 +12,7 @@ Quick guide to get started with the orchestrator-subagent architecture.
 ### 1. Build the Project
 
 ```bash
-cd /Users/shunsuke/Dev/AI_Agent
+cd /devb/seize
 cargo build --release
 ```
 

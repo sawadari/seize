@@ -1,9 +1,0 @@
-# EVENT: error_recovery
-# RECOVERY: エラーから回復
-# DURATION: ~8s
-
-REIMU: あっ、また動き出した！
-MARISA: リカバリー成功だぜ。問題なし
-REIMU: よかった〜！心配したよ！
-MARISA: これくらい想定内だぜ。エラー処理も完璧だ
-REIMU: さすが魔理沙！頼もしい！

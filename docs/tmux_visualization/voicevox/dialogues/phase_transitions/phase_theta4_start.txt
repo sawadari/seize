@@ -1,9 +1,0 @@
-# EVENT: phase_theta4_start
-# PHASE: θ₄ Execute - 実行フェーズ開始
-# DURATION: ~10s
-
-REIMU: おっ！θ₄だって！何か始まりそう！
-MARISA: 実行フェーズだぜ。いよいよ本番だ
-REIMU: 本番？何をするの？
-MARISA: 計画してきたタスクを実際に動かすんだ。ここが一番派手だぜ
-REIMU: わくわくする！うまくいくといいね！

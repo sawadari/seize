@@ -137,7 +137,7 @@ docs/
 
 ## 📝 License
 
-Part of the AI_Agent project. See main project LICENSE.
+Part of the SEIZE project. See main project LICENSE.
 
 ---
 

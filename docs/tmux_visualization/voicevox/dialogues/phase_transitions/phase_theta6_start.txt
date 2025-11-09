@@ -1,9 +1,0 @@
-# EVENT: phase_theta6_start
-# PHASE: θ₆ Learn - 学習フェーズ開始
-# DURATION: ~10s
-
-REIMU: 最後だ！θ₆学習フェーズ！
-MARISA: そうだぜ。ここで今回の経験を学習するんだ
-REIMU: 学習って、勉強するの？
-MARISA: まぁそんな感じだ。次はもっとうまくやるための準備だぜ
-REIMU: すごいね！進化するんだ！

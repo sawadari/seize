@@ -362,7 +362,7 @@ See root LICENSE file for details.
 
 ## 📞 Support
 
-- **GitHub**: [Issues](https://github.com/ShunsukeHayashi/AI_Agent/issues)
+- **GitHub**: [Issues](https://github.com/ShunsukeHayashi/SEIZE/issues)
 - **Discord**: [Community Server](#)
 - **Twitter**: [@FlickeringScenery](#)
 - **Email**: support@flickeringscenery.dev

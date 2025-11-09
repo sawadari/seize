@@ -275,7 +275,7 @@ const firstInstallHook: HookPoint = {
       playFullAnimation: true,
       callToAction: {
         text: '⭐ Star on GitHub',
-        url: 'https://github.com/ShunsukeHayashi/AI_Agent',
+        url: 'https://github.com/ShunsukeHayashi/SEIZE',
       },
     });
   },
@@ -605,7 +605,7 @@ async showFirstTimeExperience(): Promise<void> {
   // Step 4: Show call-to-action
   await this.showCallToAction({
     text: '⭐ Like what you see? Star us on GitHub!',
-    url: 'https://github.com/ShunsukeHayashi/AI_Agent',
+    url: 'https://github.com/ShunsukeHayashi/SEIZE',
     button: 'Star Now',
   });
 }
@@ -829,7 +829,7 @@ class ShareOptimizer implements ShareFeatures {
                   encodeURIComponent(
                     '🤯 Claude Code just spawned autonomous AI agents! @ClaudeAI #FlickeringScenery'
                   ) +
-                  '&url=https://github.com/ShunsukeHayashi/AI_Agent'
+                  '&url=https://github.com/ShunsukeHayashi/SEIZE'
               )
             );
           }
@@ -845,7 +845,7 @@ class ShareOptimizer implements ShareFeatures {
 // Subtle watermark in tmux status bar
 const BRANDING = {
   watermark: '⚡ Powered by Flickering Scenery',
-  github: 'github.com/ShunsukeHayashi/AI_Agent',
+  github: 'github.com/ShunsukeHayashi/SEIZE',
   cta: '⭐ Star on GitHub',
 };
 
@@ -867,7 +867,7 @@ async function showCallToAction(): Promise<void> {
     <div style="text-align: center; padding: 40px;">
       <h1>🌟 Enjoying Flickering Scenery?</h1>
       <p>Help us reach more developers!</p>
-      <a href="https://github.com/ShunsukeHayashi/AI_Agent"
+      <a href="https://github.com/ShunsukeHayashi/SEIZE"
          style="display: inline-block; padding: 15px 30px; background: #0366d6; color: white; text-decoration: none; border-radius: 6px;">
         ⭐ Star on GitHub
       </a>

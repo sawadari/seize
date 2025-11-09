@@ -2,7 +2,7 @@
 
 **Version**: 1.0.0
 **Last Updated**: 2025-11-07
-**Author**: AI_Agent Project Team
+**Author**: SEIZE Project Team
 
 ---
 

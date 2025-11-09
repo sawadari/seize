@@ -25,8 +25,8 @@
 
 ```bash
 # Clone repository
-git clone https://github.com/ShunsukeHayashi/AI_Agent.git
-cd AI_Agent/docs/claude_code_plugin
+git clone https://github.com/ShunsukeHayashi/SEIZE.git
+cd SEIZE/docs/claude_code_plugin
 
 # Install dependencies
 npm install

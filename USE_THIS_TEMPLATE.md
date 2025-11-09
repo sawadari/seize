@@ -20,8 +20,8 @@ cd YOUR_PROJECT_NAME
 ### 2. プロジェクト名を変更
 
 ```bash
-# すべての "AI_Agent" を あなたのプロジェクト名に置換
-find . -type f -name "*.md" -exec sed -i '' 's/AI_Agent/YOUR_PROJECT/g' {} +
+# すべての "SEIZE" を あなたのプロジェクト名に置換
+find . -type f -name "*.md" -exec sed -i '' 's/SEIZE/YOUR_PROJECT/g' {} +
 find . -type f -name "*.toml" -exec sed -i '' 's/mahjong_ai/your_project/g' {} +
 ```
 

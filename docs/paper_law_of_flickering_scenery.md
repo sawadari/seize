@@ -913,7 +913,7 @@ World states are serialized using JSON with schema versioning:
   "snapshot_id": 42,
   "timestamp": "2025-11-07T13:47:00Z",
   "filesystem": {
-    "/Users/shunsuke/Dev/AI_Agent/": {
+    "/devb/seize/": {
       "type": "directory",
       "children": ["docs/", "src/", ".claude/"]
     }

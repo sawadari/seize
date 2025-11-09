@@ -1,9 +1,0 @@
-# EVENT: convergence_75
-# PROGRESS: 75% 収束到達
-# DURATION: ~8s
-
-REIMU: 75%だって！もうすぐゴールだね！
-MARISA: ああ、ラストスパートだぜ
-REIMU: わくわくしてきた！完成が楽しみ！
-MARISA: もう少しだけ待ってくれよ。丁寧に仕上げるからな
-REIMU: うん！待ってるよ！

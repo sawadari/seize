@@ -1,0 +1,21 @@
+[package]
+name = "seize-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "seize"
+path = "src/main.rs"
+
+[dependencies]
+seize-core = { path = "../seize-core" }
+clap = { workspace = true }
+colored = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+serde_json = { workspace = true }

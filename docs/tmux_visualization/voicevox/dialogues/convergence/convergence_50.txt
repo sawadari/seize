@@ -1,9 +1,0 @@
-# EVENT: convergence_50
-# PROGRESS: 50% 収束到達
-# DURATION: ~8s
-
-REIMU: わぁ！50%になった！半分だね！
-MARISA: おっ、いいペースだぜ。折り返し地点だな
-REIMU: 半分来たってことは、あと半分？
-MARISA: まぁそういうことだ。後半も頑張るぜ
-REIMU: 応援してるよ！ファイト〜！

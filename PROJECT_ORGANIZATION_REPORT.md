@@ -27,7 +27,7 @@
 ### 1. ルート構成
 
 ```
-AI_Agent/
+SEIZE/
 ├── CLAUDE.md                    # エージェント方程式定義
 ├── README.md                    # プロジェクト概要
 ├── Cargo.toml                   # Rust設計図（実装なし）

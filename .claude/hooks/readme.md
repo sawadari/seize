@@ -30,4 +30,4 @@ open -a VOICEVOX
 - `Write` → 魔理沙: "ファイルに書き込むぜ"
 - `Task` → 霊夢→魔理沙: "エージェントを起動したよ！" → "複雑な作業を分解して実行するんだ"
 
-詳細は完全版ドキュメント参照: `/Users/shunsuke/Dev/AI_Agent/docs/tmux_visualization/voicevox/`
+詳細は完全版ドキュメント参照: `/devb/seize/docs/tmux_visualization/voicevox/`

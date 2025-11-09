@@ -152,7 +152,7 @@ I.2.8 Problem Solving, Control Methods, and Search
 ### Step 2: Prepare Submission Package
 
 ```bash
-cd /Users/shunsuke/Dev/AI_Agent/docs/
+cd /devb/seize/docs/
 
 # Create submission directory
 mkdir arxiv_submission

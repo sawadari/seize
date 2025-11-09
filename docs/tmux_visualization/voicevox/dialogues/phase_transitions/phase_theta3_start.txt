@@ -1,9 +1,0 @@
-# EVENT: phase_theta3_start
-# PHASE: θ₃ Allocate - 配分フェーズ開始
-# DURATION: ~10s
-
-REIMU: θ₃だって！配分フェーズ？何を配分するの？
-MARISA: タスクをどのエージェントに割り当てるか決めるんだぜ
-REIMU: エージェント？何それ？
-MARISA: 働いてくれる仲間みたいなもんだ。得意なことを任せるんだぜ
-REIMU: へぇ〜、チームワークなんだね！
