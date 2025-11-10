@@ -44,21 +44,21 @@ export const DEFAULT_GUARDRAIL_RULES: GuardrailRule[] = [
   },
   {
     ruleId: 'R005',
-    name: '機能→要求は禁止',
+    name: '機能→要求は警告（自動正規化可能）',
     pattern: { sourceType: 'feature', targetType: 'requirement' },
-    verdict: 'forbidden',
-    edgeColor: '#EF4444',
-    approvalRequirement: { approverCount: 2, reasonRequired: true, powerModeOnly: true },
-    rationale: '逆方向接続はトレーサビリティが逆転するため原則禁止',
+    verdict: 'warning',
+    edgeColor: '#EAB308',
+    approvalRequirement: { approverCount: 1, reasonRequired: true },
+    rationale: '逆方向接続です。要求→機能の方向に自動正規化を推奨します',
   },
   {
     ruleId: 'R006',
-    name: '機能→テストは禁止',
+    name: '機能→テストは警告（自動正規化可能）',
     pattern: { sourceType: 'feature', targetType: 'test' },
-    verdict: 'forbidden',
-    edgeColor: '#EF4444',
-    approvalRequirement: { approverCount: 2, reasonRequired: true, powerModeOnly: true },
-    rationale: 'テストが機能に依存する形は推奨されない',
+    verdict: 'warning',
+    edgeColor: '#EAB308',
+    approvalRequirement: { approverCount: 1, reasonRequired: true },
+    rationale: '逆方向接続です。テスト→機能の方向に自動正規化を推奨します',
   },
 ];
 
@@ -73,13 +73,15 @@ export class GuardrailEngine {
   }
 
   /**
-   * エッジ接続を評価
+   * エッジ接続を評価（正規化提案付き）
    */
   evaluate(
     sourceType: KnowledgeNodeType,
     targetType: KnowledgeNodeType,
     sourceLabel: string,
-    targetLabel: string
+    targetLabel: string,
+    sourceId?: string,
+    targetId?: string
   ): GuardrailEvaluation {
     // ルールにマッチするか確認
     const matchedRule = this.rules.find(
@@ -108,6 +110,14 @@ export class GuardrailEngine {
       };
     }
 
+    // 正規化提案（逆向きエッジの場合）
+    const normalization = this.checkNormalization(
+      sourceType,
+      targetType,
+      sourceId || sourceLabel,
+      targetId || targetLabel
+    );
+
     return {
       verdict: matchedRule.verdict,
       matchedRule,
@@ -118,11 +128,45 @@ export class GuardrailEngine {
         targetLabel,
         sourceType,
         targetType,
-        matchedRule
+        matchedRule,
+        normalization
       ),
       approvalRequired: true,
       reasonRequired: matchedRule.approvalRequirement.reasonRequired,
+      normalization,
     };
+  }
+
+  /**
+   * 正規化チェック（逆向きエッジの検出）
+   */
+  private checkNormalization(
+    sourceType: KnowledgeNodeType,
+    targetType: KnowledgeNodeType,
+    sourceId: string,
+    targetId: string
+  ) {
+    // 機能→要求 → 要求→機能に正規化
+    if (sourceType === 'feature' && targetType === 'requirement') {
+      return {
+        canNormalize: true,
+        normalizedSource: targetId,
+        normalizedTarget: sourceId,
+        reason: '要求→機能の標準的な方向に自動正規化します',
+      };
+    }
+
+    // 機能→テスト → テスト→機能に正規化
+    if (sourceType === 'feature' && targetType === 'test') {
+      return {
+        canNormalize: true,
+        normalizedSource: targetId,
+        normalizedTarget: sourceId,
+        reason: 'テスト→機能の標準的な方向に自動正規化します',
+      };
+    }
+
+    return undefined;
   }
 
   /**
@@ -134,7 +178,8 @@ export class GuardrailEngine {
     targetLabel: string,
     sourceType: KnowledgeNodeType,
     targetType: KnowledgeNodeType,
-    rule?: GuardrailRule
+    rule?: GuardrailRule,
+    normalization?: { canNormalize: boolean; reason: string }
   ): string {
     const connection = `${sourceLabel} → ${targetLabel}`;
 
@@ -158,14 +203,11 @@ export class GuardrailEngine {
       return `⚠️ 警告: ${connection}。${rule?.rationale || '承認理由を記録してください。'}`;
     }
 
-    // forbidden
-    if (sourceType === 'feature' && targetType === 'requirement') {
-      return `🚫 禁止: 機能 → 要求の逆方向接続です。通常は要求 → 機能の方向です。パワーユーザーモードで承認者2名の承認が必要です。`;
+    // forbidden (変更: 正規化提案を含める)
+    if (normalization?.canNormalize) {
+      return `⚠️ 逆方向接続: ${connection}。${normalization.reason}。「正規化して続行」を選択すると、自動的に標準方向に変換されます。`;
     }
-    if (sourceType === 'feature' && targetType === 'test') {
-      return `🚫 禁止: 機能 → テストの逆方向接続です。テストが機能に依存する形は推奨されません。パワーユーザーモードで承認者2名の承認が必要です。`;
-    }
-    return `🚫 禁止: ${connection}。${rule?.rationale || 'パワーユーザーモードが必要です。'}`;
+    return `⚠️ 警告: ${connection}。${rule?.rationale || '承認理由を記録してください。'}`;
   }
 
   /**

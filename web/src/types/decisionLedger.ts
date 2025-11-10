@@ -1,7 +1,7 @@
 import { KnowledgeGraph } from './knowledgeGraph';
 
 /**
- * 決定レジャーエントリ
+ * 決定レジャーエントリ（ハッシュ鎖対応）
  */
 export interface DecisionLedgerEntry {
   commitId: string;             // 一意識別子（UUID）
@@ -17,6 +17,15 @@ export interface DecisionLedgerEntry {
   confidence?: number;          // AI信頼度
   rulesMatched?: string[];      // 命中ルール
   evidence?: string[];          // 過去類似例
+
+  // ハッシュ鎖（append-only + 改ざん耐性）
+  prevHash?: string;            // 前エントリのハッシュ（最初は'0'）
+  hash?: string;                // このエントリのハッシュ（SHA-256）
+  signature?: {
+    signerId: string;           // 署名者ID
+    publicKeyFingerprint: string; // 公開鍵指紋
+    timestamp: Date;            // 署名日時
+  };
 }
 
 /**

@@ -37,4 +37,10 @@ export interface GuardrailEvaluation {
   message: string;              // ユーザー向けメッセージ
   approvalRequired: boolean;
   reasonRequired: boolean;
+  normalization?: {             // 自動正規化の提案
+    canNormalize: boolean;
+    normalizedSource: string;
+    normalizedTarget: string;
+    reason: string;
+  };
 }

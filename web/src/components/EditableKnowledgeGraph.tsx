@@ -138,12 +138,14 @@ export const EditableKnowledgeGraph: React.FC<EditableKnowledgeGraphProps> = ({
 
       if (!sourceNode || !targetNode) return;
 
-      // ガードレール評価
+      // ガードレール評価（正規化提案付き）
       const evaluation = guardrailEngine.evaluate(
         sourceNode.data.type,
         targetNode.data.type,
         sourceNode.data.label,
-        targetNode.data.label
+        targetNode.data.label,
+        sourceNode.id,
+        targetNode.id
       );
 
       // 禁止接続チェック（安全モードのみ）
