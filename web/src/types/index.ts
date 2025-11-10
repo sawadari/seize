@@ -2,7 +2,14 @@
 
 export type NodeType = 'world' | 'intent' | 'command' | 'transform' | 'goal' | 'task';
 
-export type Phase = 'ℐ' | '𝒞' | 'Θ' | 'idle';
+// 統一エージェント方程式のフェーズ（物理学的基盤）
+export type FormulaPhase = 'ℐ' | '𝒞' | 'Θ' | 'idle';
+
+// 人間中心の協働フェーズ（可視化される層）
+export type HumanCenteredPhase = 'questioning' | 'exploring' | 'deciding' | 'learning' | 'idle';
+
+// 互換性のため
+export type Phase = FormulaPhase | HumanCenteredPhase;
 
 export interface WorldState {
   version: number;

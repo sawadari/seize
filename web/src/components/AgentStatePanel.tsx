@@ -4,12 +4,22 @@ import { Phase } from '../types';
 
 const getPhaseIcon = (phase: Phase): string => {
   switch (phase) {
+    // 統一エージェント方程式フェーズ
     case 'ℐ':
       return '🎯';
     case '𝒞':
       return '📋';
     case 'Θ':
       return '⚡';
+    // 人間中心協働フェーズ
+    case 'questioning':
+      return '❓';
+    case 'exploring':
+      return '🔍';
+    case 'deciding':
+      return '🤝';
+    case 'learning':
+      return '🌟';
     case 'idle':
       return '💤';
   }
@@ -17,12 +27,22 @@ const getPhaseIcon = (phase: Phase): string => {
 
 const getPhaseLabel = (phase: Phase): string => {
   switch (phase) {
+    // 統一エージェント方程式フェーズ
     case 'ℐ':
       return 'Intent Resolution (意図解決)';
     case '𝒞':
       return 'Command Stack (コマンドスタック)';
     case 'Θ':
       return 'World Transformation (世界変換)';
+    // 人間中心協働フェーズ
+    case 'questioning':
+      return 'Questioning (問いかけ)';
+    case 'exploring':
+      return 'Exploring (情報探索)';
+    case 'deciding':
+      return 'Deciding (意思決定)';
+    case 'learning':
+      return 'Learning (学習)';
     case 'idle':
       return 'Idle (待機中)';
   }
@@ -30,12 +50,22 @@ const getPhaseLabel = (phase: Phase): string => {
 
 const getPhaseColor = (phase: Phase): string => {
   switch (phase) {
+    // 統一エージェント方程式フェーズ
     case 'ℐ':
       return 'bg-intent';
     case '𝒞':
       return 'bg-command';
     case 'Θ':
       return 'bg-transform';
+    // 人間中心協働フェーズ
+    case 'questioning':
+      return 'bg-purple-500';
+    case 'exploring':
+      return 'bg-blue-500';
+    case 'deciding':
+      return 'bg-green-500';
+    case 'learning':
+      return 'bg-yellow-500';
     case 'idle':
       return 'bg-gray-400';
   }

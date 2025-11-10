@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ecommerceAuthDemoScenarios } from '../demo/ecommerceAuthDemo';
+import { humanCenteredDemoScenarios } from '../demo/humanCenteredDemo';
 import { useGraphStore } from '../stores/graphStore';
 import { useAgentStore } from '../stores/agentStore';
 import { useChatStore } from '../stores/chatStore';
@@ -12,10 +12,10 @@ export const DemoControls: React.FC = () => {
   const agentStore = useAgentStore();
   const chatStore = useChatStore();
 
-  const totalSteps = ecommerceAuthDemoScenarios.length;
+  const totalSteps = humanCenteredDemoScenarios.length;
 
   const loadScenario = (stepIndex: number) => {
-    const scenario = ecommerceAuthDemoScenarios[stepIndex];
+    const scenario = humanCenteredDemoScenarios[stepIndex];
 
     // グラフをクリア
     graphStore.clear();
@@ -92,15 +92,15 @@ export const DemoControls: React.FC = () => {
   const getStepLabel = (stepIndex: number): string => {
     switch (stepIndex) {
       case 0:
-        return '初期状態';
+        return '👤 人間の問い';
       case 1:
-        return 'ℐ 意図解決';
+        return '❓ AIの問いかけ';
       case 2:
-        return '𝒞 コマンドスタック';
+        return '👥 人間の判断とAIの情報';
       case 3:
-        return 'Θ 世界変換';
+        return '🤝 共同で意思決定';
       case 4:
-        return '✨ 収束';
+        return '🌟 学びと成長';
       default:
         return `Step ${stepIndex}`;
     }
@@ -110,10 +110,10 @@ export const DemoControls: React.FC = () => {
     <div className="bg-white rounded-lg shadow-lg p-4">
       <div className="mb-4">
         <h3 className="text-lg font-bold text-gray-800 mb-2">
-          🎬 デモ: ECサイト認証機能改善
+          🌍 人間中心AI協働デモ
         </h3>
         <p className="text-sm text-gray-600">
-          統一エージェント方程式による要求抽出プロセスを可視化
+          人間とAIが共通の目標を持ち、相互補完的に問題を解決
         </p>
       </div>
 
@@ -126,7 +126,7 @@ export const DemoControls: React.FC = () => {
           <span className="text-sm text-gray-500">{getStepLabel(currentStep)}</span>
         </div>
         <div className="flex space-x-1">
-          {ecommerceAuthDemoScenarios.map((_, index) => (
+          {humanCenteredDemoScenarios.map((_, index) => (
             <button
               key={index}
               onClick={() => handleStepClick(index)}
@@ -178,15 +178,15 @@ export const DemoControls: React.FC = () => {
       <div className="mt-4 p-3 bg-gray-50 rounded-lg">
         <p className="text-xs text-gray-600">
           {currentStep === 0 &&
-            '初期状態: カート放棄率60%, パスワードリセット問い合わせ多数'}
+            '👤 人間が目標を提示: ECサイトのUX改善、カート放棄率60%を削減したい'}
           {currentStep === 1 &&
-            'ℐ (意図解決): Step-Back Questionで本質的課題を理解し、目標を設定'}
+            '❓ AIが適切な問いを提示: なぜユーザーは購入をやめるのか？（Step-Back Question）'}
           {currentStep === 2 &&
-            '𝒞 (コマンドスタック): 目標を3つのタスクに分解（PO/CISO/ユーザーFB分析）'}
+            '👥 人間が判断し、AIが情報提供: 3つのステークホルダー分析を実施'}
           {currentStep === 3 &&
-            'Θ (世界変換): 6つの変換フェーズで要求を抽出・仕様化（θ₁〜θ₆）'}
+            '🤝 AIが選択肢を提示、人間が最終決定: セキュリティ優先→ソーシャルログイン'}
           {currentStep === 4 &&
-            '収束: ISO/IEC/IEEE 29148準拠の要求仕様が完成（13個の要求）'}
+            '🌟 共同で成果を生み出し、共に学習: 要求仕様書完成、組織憲章を実践'}
         </p>
       </div>
     </div>

@@ -14,17 +14,17 @@ function App() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold flex items-center space-x-2">
-                <span>⚡</span>
-                <span>Seize - 統一エージェント方程式</span>
+                <span>🌍</span>
+                <span>人間中心AI時代の協働</span>
               </h1>
               <p className="text-sm opacity-90 mt-1">
-                人間とAIの協働を、次のレベルへ
+                人間とAIが共通の目標を持ち、相互補完的に問題を解決
               </p>
             </div>
             <div className="text-right">
-              <div className="text-xs opacity-75">Unified Agent Formula</div>
-              <div className="text-sm font-mono">
-                𝔸(Input, World₀) = lim<sub>n→∞</sub> [∫₀ⁿ (Θ ◦ 𝒞 ◦ ℐ)(t) dt]
+              <div className="text-xs opacity-75">Human-Centered Organization Charter</div>
+              <div className="text-xs font-light mt-1">
+                人間は判断する | AIは情報を提供する | 共に学び、成長する
               </div>
             </div>
           </div>
@@ -69,8 +69,10 @@ function App() {
       <footer className="bg-gray-800 text-white py-3">
         <div className="container mx-auto px-6 text-center text-sm">
           <p>
-            🌍 瞬く景色 (Flickering Scenery) |{' '}
-            <span className="font-mono">World₀ → [瞬き] → World₁ → [瞬き] → World₂ → ...</span>
+            📜 組織憲章の原則 |{' '}
+            <span className="font-light">
+              意図と責任 · 説明と透明性 · 共創と成長 · 倫理と敬意 · 学習と更新
+            </span>
           </p>
         </div>
       </footer>
