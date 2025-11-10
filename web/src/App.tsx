@@ -1,78 +1,71 @@
-import React from 'react';
-import { GraphView } from './components/GraphView';
-import { ChatInterface } from './components/ChatInterface';
-import { AgentStatePanel } from './components/AgentStatePanel';
-import { DemoControls } from './components/DemoControls';
+import React, { useState } from 'react';
+import { KnowledgeGraphView } from './components/KnowledgeGraphView';
+import { CommentBubbles } from './components/CommentBubbles';
+import { sampleKnowledgeGraph, sampleGraphLayout } from './data/sampleKnowledgeGraph';
+import { Comment } from './types/knowledgeGraph';
 
 function App() {
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [comments, setComments] = useState<Comment[]>(sampleKnowledgeGraph.comments);
+
+  const handleNodeClick = (nodeId: string) => {
+    setSelectedNodeId(nodeId);
+  };
+
+  const handleAddComment = (nodeId: string, content: string) => {
+    const newComment: Comment = {
+      id: `comment-${Date.now()}`,
+      nodeId,
+      author: 'human',
+      content,
+      timestamp: new Date(),
+    };
+    setComments([...comments, newComment]);
+  };
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-gray-100">
+    <div className="h-screen w-screen flex flex-col bg-white">
       {/* ヘッダー */}
-      <header className="bg-gradient-to-r from-blue-600 to-green-600 text-white shadow-lg">
+      <header className="border-b bg-white shadow-sm">
         <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold flex items-center space-x-2">
-                <span>🌍</span>
-                <span>人間中心AI時代の協働</span>
-              </h1>
-              <p className="text-sm opacity-90 mt-1">
-                人間とAIが共通の目標を持ち、相互補完的に問題を解決
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="text-xs opacity-75">Human-Centered Organization Charter</div>
-              <div className="text-xs font-light mt-1">
-                人間は判断する | AIは情報を提供する | 共に学び、成長する
-              </div>
-            </div>
-          </div>
+          <h1 className="text-xl font-bold text-gray-900">
+            人間とAIの共通認識
+          </h1>
+          <p className="text-sm text-gray-600 mt-1">
+            知識グラフで要求・機能・テストのトレーサビリティを可視化
+          </p>
         </div>
       </header>
 
       {/* メインコンテンツ */}
       <main className="flex-1 overflow-hidden">
-        <div className="h-full w-full p-4">
-          <div className="h-full grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {/* 左: グラフビュー */}
-            <div className="lg:col-span-2 h-full">
-              <div className="h-full bg-white rounded-lg shadow-lg overflow-hidden">
-                <div className="h-full">
-                  <GraphView />
-                </div>
-              </div>
-            </div>
+        <div className="h-full flex">
+          {/* 知識グラフ（左側 - 広め）*/}
+          <div className="flex-[3] border-r">
+            <KnowledgeGraphView
+              nodes={sampleKnowledgeGraph.nodes}
+              edges={sampleKnowledgeGraph.edges}
+              layout={sampleGraphLayout}
+              onNodeClick={handleNodeClick}
+            />
+          </div>
 
-            {/* 右: デモコントロール & チャット & エージェント状態 */}
-            <div className="h-full flex flex-col space-y-4">
-              {/* デモコントロール */}
-              <div className="flex-shrink-0">
-                <DemoControls />
-              </div>
-
-              {/* チャットインターフェース */}
-              <div className="flex-[2] min-h-0">
-                <ChatInterface />
-              </div>
-
-              {/* エージェント状態パネル */}
-              <div className="flex-1 overflow-y-auto min-h-0">
-                <AgentStatePanel />
-              </div>
-            </div>
+          {/* コメント（右側 - 狭め）*/}
+          <div className="flex-[1] min-w-[320px] max-w-[400px]">
+            <CommentBubbles
+              comments={comments}
+              selectedNodeId={selectedNodeId}
+              onAddComment={handleAddComment}
+            />
           </div>
         </div>
       </main>
 
       {/* フッター */}
-      <footer className="bg-gray-800 text-white py-3">
-        <div className="container mx-auto px-6 text-center text-sm">
-          <p>
-            📜 組織憲章の原則 |{' '}
-            <span className="font-light">
-              意図と責任 · 説明と透明性 · 共創と成長 · 倫理と敬意 · 学習と更新
-            </span>
+      <footer className="border-t bg-gray-50 py-2">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-xs text-gray-500">
+            {sampleKnowledgeGraph.metadata.projectName} - v{sampleKnowledgeGraph.metadata.version}
           </p>
         </div>
       </footer>
