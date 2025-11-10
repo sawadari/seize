@@ -124,7 +124,7 @@
 
 **目的**: 全ての意思決定を自動記録し、監査・説明・再利用を可能にする
 
-#### 自動記帳内容
+#### 自動記帳内容（P0+更新: ハッシュ鎖対応）
 
 | フィールド | 説明 | 例 |
 |---|---|---|
@@ -141,6 +141,15 @@
 | **confidence** | AI信頼度 | `0.92` |
 | **rulesMatched** | 命中ルール | `["R001: 要求→機能は許可"]` |
 | **evidence** | 過去類似例 | `["case#123", "case#456"]` |
+| **prevHash** | **（P0+追加）** 前エントリのハッシュ | `0` (最初) / `7a3f5e2d...` |
+| **hash** | **（P0+追加）** このエントリのハッシュ | `a8b4c9e1...` (SHA-256) |
+| **signature** | **（P0+追加）** 署名メタデータ | `{signerId, publicKeyFingerprint, timestamp}` |
+
+**P0+改ざん耐性**:
+- 各エントリは `hash = SHA256(prevHash + canonicalJson(entry))` で計算
+- エクスポート時は署名付き（signerId + publicKeyFingerprint）
+- `verifyLedgerChain()` で整合性検証（改ざん検出）
+- append-only保証（過去エントリの変更は即座に検出）
 
 #### UI
 
@@ -283,9 +292,164 @@ interface Commit {
 - **影響分析**: 変更の波及範囲を事前に把握
 - **リスク管理**: 問題箇所を早期発見
 
+## P0+ 実装状況（2025-01-10）
+
+### 完了した機能
+
+以下の3つのP0+機能が実装完了しました:
+
+#### 1. ハッシュ鎖（改ざん耐性）
+
+**実装**: `web/src/utils/LedgerHashChain.ts` (106行)
+
+**機能**:
+- SHA-256ハッシュによる改ざん検出
+- `hash = SHA256(prevHash + canonicalJson(entry))` の連鎖構造
+- 署名付きエントリ作成（signerId + publicKeyFingerprint + timestamp）
+- チェーン整合性検証（`verifyLedgerChain()`）
+- 署名付きエクスポート
+
+**実装例**:
+```typescript
+// エントリ作成時
+const entry = await createSignedLedgerEntry(
+  {
+    commitId: 'dec-001',
+    timestamp: new Date(),
+    purpose: 'カート放棄率15%削減',
+    actionType: 'add_edge',
+    // ...
+  },
+  prevHash,  // 前エントリのハッシュ（最初は'0'）
+  'user-12345-pubkey-fingerprint'
+);
+
+// チェーン検証
+const result = await verifyLedgerChain(allEntries);
+if (!result.valid) {
+  console.error(`改ざん検出: ${result.brokenAt}番目のエントリで破損`);
+}
+```
+
+**価値**: 決定レジャーの改ざんを即座に検出可能（append-only保証）
+
+---
+
+#### 2. 承認ダイアログ（必須項目完全化）
+
+**実装**: `web/src/components/ApprovalDialog.tsx` (196行)
+
+**必須フィールド**:
+```typescript
+export interface ApprovalData {
+  rationale: string;            // 承認理由（必須、最小10文字）
+  rationaleType: string;        // 理由の種別（選択式、6種類）
+  reference?: string;           // 参照（Issue/規格/設計票）
+  rollbackCondition?: string;   // 撤回条件
+  purposeAlignment: boolean;    // 目的との整合（必須チェック）
+}
+```
+
+**選択式の理由種別**:
+- `standard_compliance`: 規格準拠（ISO/IEC/IEEE等）
+- `minimal_impact`: 影響最小化
+- `schedule_priority`: 納期優先
+- `quality_priority`: 品質優先
+- `security_priority`: セキュリティ優先
+- `other`: その他
+
+**バリデーション**:
+- 承認理由は最低10文字必須
+- 目的との整合チェックボックスは必須
+- 条件を満たさない場合、「✓ 署名して承認」ボタンは無効化
+
+**価値**: 全ての決定に「なぜ」を必ず記録、監査時の説明責任を担保
+
+---
+
+#### 3. 自動正規化（逆向きエッジ対策）
+
+**実装**: `web/src/utils/GuardrailEngine.ts` + `web/src/types/guardrail.ts`
+
+**変更内容**:
+```typescript
+// R005/R006を 'forbidden' → 'warning' に変更
+{
+  ruleId: 'R005',
+  name: '機能→要求は警告（自動正規化可能）',
+  pattern: { sourceType: 'feature', targetType: 'requirement' },
+  verdict: 'warning',  // 変更: forbidden → warning
+  edgeColor: '#EAB308',
+  approvalRequirement: { approverCount: 1, reasonRequired: true },
+  rationale: '逆方向接続です。要求→機能の方向に自動正規化を推奨します',
+}
+
+// 正規化提案フィールドを追加
+export interface GuardrailEvaluation {
+  // ...既存フィールド
+  normalization?: {             // 自動正規化の提案
+    canNormalize: boolean;
+    normalizedSource: string;
+    normalizedTarget: string;
+    reason: string;
+  };
+}
+```
+
+**検出パターン**:
+- **機能 → 要求** → 自動的に **要求 → 機能** を提案
+- **機能 → テスト** → 自動的に **テスト → 機能** を提案
+
+**メッセージ例**:
+```
+⚠️ 逆方向接続: Feature-001 → BR-001。
+要求→機能の標準的な方向に自動正規化します。
+「正規化して続行」を選択すると、自動的に標準方向に変換されます。
+```
+
+**価値**: 既存資産インポート時の運用破綻を回避、レガシーデータの自動修正
+
+---
+
+### 未完了のP0項目（残り7項目）
+
+以下のP0項目は次の実装フェーズで対応予定:
+
+1. **Alternatives共通スコア表** (P0-3)
+   - 5軸スコアリング: purposeFit/coverageDelta/riskScore/costScore/feasibility
+   - PurposeBannerと重み連携
+
+2. **Why-Box自動化バイアス対策** (P0-4)
+   - 信頼度を既定で伏せる
+   - 命中ルール・過去類似・差分を先に表示
+
+3. **Time Travel整合モデル** (P0-5)
+   - Git-like: `Commit{graphSnapshot, parentCommitId, hash}`
+   - 巻き戻しは新コミットで表現
+   - パワーモード時は二者承認必須
+
+4. **A11y完全対応** (P0-7)
+   - 色+線種/アイコン/ラベルの冗長化
+   - キーボード完結操作（Tab/Enter/Space/Delete）
+   - WCAG AA準拠
+
+5. **PII/秘匿スキャナ** (P0-8)
+   - 自由記述の機密情報検出
+   - 保存前に自動伏字処理
+
+6. **PurposeBanner成功指標必須化** (P0-9)
+   - Success Metrics入力フィールド追加
+   - 未設定時の編集抑止
+
+7. **観測可能性定義** (P0-10)
+   - SLI/SLO: Time to Decision / Retract率 / 採択率
+   - OpenTelemetry統合
+
+---
+
 ## ガードレール設計
 
-### 許可関係（初期設定）
+### 許可関係（初期設定 + P0+更新）
 
 | 接続パターン | ガードレール | エッジ色 | 承認要件 | 理由 |
 |---|---|---|---|---|
@@ -293,8 +457,8 @@ interface Commit {
 | **テスト → 機能**<br>(tests) | ✅ 許可 | 青 | 承認者1名 | 機能の品質保証を確立 |
 | **テスト → 要求**<br>(verifies) | ✅ 許可 | 青 | 承認者1名 | 要求の受入基準を検証 |
 | **要求 → テスト**<br>(参照) | ⚠️ 警告 | 黄 | 承認者1名<br>+ 理由必須 | 一般的ではないが有効（要求からテストケースへの参照） |
-| **機能 → 要求**<br>(逆方向) | 🚫 禁止 | 赤 | 承認者2名<br>+ 理由必須<br>（パワーモード） | 逆方向接続は原則禁止（トレーサビリティが逆転） |
-| **機能 → テスト**<br>(逆方向) | 🚫 禁止 | 赤 | 承認者2名<br>（パワーモード） | テストが機能に依存する形は推奨されない |
+| **機能 → 要求**<br>(逆方向) | ⚠️ 警告<br>**（P0+更新）** | 黄 | 承認者1名<br>+ 理由必須<br>**自動正規化提案** | **逆方向検出→正規方向に自動変換提案**（運用破綻回避） |
+| **機能 → テスト**<br>(逆方向) | ⚠️ 警告<br>**（P0+更新）** | 黄 | 承認者1名<br>+ 理由必須<br>**自動正規化提案** | **逆方向検出→正規方向に自動変換提案**（レガシーデータ対応） |
 
 ### ガードレールルール記述形式
 
@@ -1086,14 +1250,33 @@ const computeHash = (commit: Commit): string => {
 
 ## 実装フェーズ
 
-### P0（即価値、2週間）
+### P0+（完了済み、2025-01-10）
 
-| 機能 | 実装内容 | ファイル |
-|---|---|---|
-| **目的バナー** | 最上部に固定表示<br>目的未設定時は接続作成を抑止 | `PurposeBanner.tsx` |
-| **決定レジャー（最小）** | 承認時に自動記帳<br>下部タブで履歴表示 | `DecisionLedger.tsx`<br>`types/decisionLedger.ts` |
-| **根拠パネル（ルール命中のみ）** | 右サイドに固定<br>命中ルールを表示 | `WhyBox.tsx` |
-| **ガードレール（基本6ルール）** | R001-R006を実装<br>エッジ色を変更 | `utils/GuardrailEngine.ts` |
+**実装済み機能**:
+
+| 機能 | 実装内容 | ファイル | 状態 |
+|---|---|---|---|
+| **ハッシュ鎖** | SHA-256改ざん耐性<br>署名付きエントリ<br>チェーン整合性検証 | `utils/LedgerHashChain.ts` (106行)<br>`types/decisionLedger.ts` | ✅ 完了 |
+| **承認ダイアログ** | 必須5フィールド<br>最小10文字バリデーション<br>目的整合チェック | `components/ApprovalDialog.tsx` (196行) | ✅ 完了 |
+| **自動正規化** | 逆向きエッジ検出<br>正規方向への変換提案<br>R005/R006をwarningに変更 | `utils/GuardrailEngine.ts`<br>`types/guardrail.ts`<br>`components/EditableKnowledgeGraph.tsx` | ✅ 完了 |
+| **ガードレール（基本6ルール）** | R001-R006を実装<br>エッジ色を変更 | `utils/GuardrailEngine.ts` | ✅ 完了 |
+
+**技術詳細**:
+- **コミット**: `feat: P0+強化完了 - 改ざん耐性・承認必須化・自動正規化`
+- **変更**: 6ファイル, 402行追加, 24行削除
+- **テスト**: 開発サーバー起動中 (`http://localhost:3000`)
+
+---
+
+### P0（残り項目、2週間目標）
+
+| 機能 | 実装内容 | ファイル | 状態 |
+|---|---|---|---|
+| **目的バナー** | 最上部に固定表示<br>目的未設定時は接続作成を抑止 | `PurposeBanner.tsx` | 🔜 予定 |
+| **決定レジャー（最小）** | 承認時に自動記帳<br>下部タブで履歴表示 | `DecisionLedger.tsx`<br>`types/decisionLedger.ts` | 🔜 予定 |
+| **根拠パネル（ルール命中のみ）** | 右サイドに固定<br>命中ルールを表示 | `WhyBox.tsx` | 🔜 予定 |
+| **Alternatives共通スコア表** | 5軸スコアリング<br>PurposeBannerと重み連携 | `AlternativesBoard.tsx` | 🔜 予定 |
+| **A11y基本対応** | キーボード操作<br>色+アイコン冗長化 | 全コンポーネント | 🔜 予定 |
 
 ### P1（中核機能、4週間）
 
