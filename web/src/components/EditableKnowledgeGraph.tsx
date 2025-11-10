@@ -11,16 +11,24 @@ import ReactFlow, {
   Connection,
   MarkerType,
   Panel,
+  Handle,
+  Position,
+  ConnectionMode,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { KnowledgeNode, KnowledgeEdge } from '../types/knowledgeGraph';
+import { GuardrailEvaluation } from '../types/guardrail';
+import { guardrailEngine } from '../utils/GuardrailEngine';
 
 interface EditableKnowledgeGraphProps {
   initialNodes: KnowledgeNode[];
   initialEdges: KnowledgeEdge[];
   layout: { nodes: Array<{ id: string; position: { x: number; y: number } }> };
+  purposeSet: boolean;  // 目的が設定されているか
+  isPowerMode: boolean; // パワーユーザーモード
   onEdgeChange?: (edges: KnowledgeEdge[]) => void;
   onNodeChange?: (nodes: KnowledgeNode[]) => void;
+  onEvaluationChange?: (evaluation: GuardrailEvaluation | null) => void;
 }
 
 // シンプルなカスタムノード
@@ -40,8 +48,15 @@ const CustomNode = ({ data }: any) => {
 
   return (
     <div
-      className={`px-4 py-3 rounded-lg border-2 shadow-sm min-w-[150px] ${getNodeStyle()}`}
+      className={`px-4 py-3 rounded-lg border-2 shadow-sm min-w-[150px] ${getNodeStyle()} relative`}
     >
+      {/* 入力ハンドル（左側） */}
+      <Handle
+        type="target"
+        position={Position.Left}
+        className="w-3 h-3 !bg-gray-500 border-2 border-white"
+      />
+
       <div className="text-xs font-bold mb-1">{data.label}</div>
       <div className="text-sm">{data.description}</div>
       {data.metadata?.priority && (
@@ -49,6 +64,13 @@ const CustomNode = ({ data }: any) => {
           {data.metadata.priority}
         </div>
       )}
+
+      {/* 出力ハンドル（右側） */}
+      <Handle
+        type="source"
+        position={Position.Right}
+        className="w-3 h-3 !bg-gray-500 border-2 border-white"
+      />
     </div>
   );
 };
@@ -61,8 +83,11 @@ export const EditableKnowledgeGraph: React.FC<EditableKnowledgeGraphProps> = ({
   initialNodes,
   initialEdges,
   layout,
+  purposeSet,
+  isPowerMode,
   onEdgeChange,
   onNodeChange,
+  onEvaluationChange,
 }) => {
   // React Flow用のノードに変換
   const rfNodes: Node[] = initialNodes.map((node) => {
@@ -102,38 +127,59 @@ export const EditableKnowledgeGraph: React.FC<EditableKnowledgeGraphProps> = ({
   // エッジ接続時
   const onConnect = useCallback(
     (connection: Connection) => {
+      // 目的未設定チェック
+      if (!purposeSet) {
+        alert('⚠️ 目的を設定してください。目的がない変更は承認できません。');
+        return;
+      }
+
+      const sourceNode = nodes.find((n) => n.id === connection.source);
+      const targetNode = nodes.find((n) => n.id === connection.target);
+
+      if (!sourceNode || !targetNode) return;
+
+      // ガードレール評価
+      const evaluation = guardrailEngine.evaluate(
+        sourceNode.data.type,
+        targetNode.data.type,
+        sourceNode.data.label,
+        targetNode.data.label
+      );
+
+      // 禁止接続チェック（安全モードのみ）
+      if (evaluation.verdict === 'forbidden' && !isPowerMode) {
+        alert(
+          `🚫 禁止接続: ${evaluation.message}\n\nパワーユーザーモードに切り替えるか、承認者2名の承認が必要です。`
+        );
+        return;
+      }
+
+      // エッジ作成（ガードレール評価に基づく色）
       const newEdge = {
         ...connection,
         id: `edge-${Date.now()}`,
         type: 'smoothstep',
         style: {
-          stroke: '#3B82F6',
+          stroke: evaluation.edgeColor,
           strokeWidth: 2,
         },
         markerEnd: {
           type: MarkerType.ArrowClosed,
-          color: '#3B82F6',
+          color: evaluation.edgeColor,
         },
       };
 
       setEdges((eds) => addEdge(newEdge, eds));
 
-      // AIサジェスチョン
-      const sourceNode = nodes.find((n) => n.id === connection.source);
-      const targetNode = nodes.find((n) => n.id === connection.target);
+      // サジェスチョン表示
+      setSuggestion({
+        message: evaluation.message,
+        edgeId: newEdge.id!,
+      });
 
-      if (sourceNode && targetNode) {
-        const suggestion = generateSuggestion(
-          sourceNode.data.type,
-          targetNode.data.type,
-          sourceNode.data.label,
-          targetNode.data.label
-        );
-
-        setSuggestion({
-          message: suggestion,
-          edgeId: newEdge.id!,
-        });
+      // 評価結果を親に通知（WhyBox用）
+      if (onEvaluationChange) {
+        onEvaluationChange(evaluation);
       }
 
       // コールバック
@@ -148,38 +194,8 @@ export const EditableKnowledgeGraph: React.FC<EditableKnowledgeGraphProps> = ({
         onEdgeChange(kgEdges);
       }
     },
-    [edges, nodes, onEdgeChange, setEdges]
+    [edges, nodes, purposeSet, isPowerMode, onEdgeChange, onEvaluationChange, setEdges]
   );
-
-  // AIサジェスチョン生成
-  const generateSuggestion = (
-    sourceType: string,
-    targetType: string,
-    sourceLabel: string,
-    targetLabel: string
-  ): string => {
-    if (sourceType === 'requirement' && targetType === 'feature') {
-      return `✅ 適切な接続です: 要求「${sourceLabel}」が機能「${targetLabel}」で実装されます。トレーサビリティが確立されました。`;
-    }
-
-    if (sourceType === 'test' && targetType === 'feature') {
-      return `✅ 適切な接続です: テスト「${sourceLabel}」が機能「${targetLabel}」を検証します。品質保証が強化されました。`;
-    }
-
-    if (sourceType === 'test' && targetType === 'requirement') {
-      return `✅ 適切な接続です: テスト「${sourceLabel}」が要求「${targetLabel}」を検証します。受入基準が明確になりました。`;
-    }
-
-    if (sourceType === 'feature' && targetType === 'requirement') {
-      return `⚠️ 逆方向の接続です: 通常は要求 → 機能の方向です。エッジを削除して逆にすることをお勧めします。`;
-    }
-
-    if (sourceType === 'requirement' && targetType === 'test') {
-      return `💡 提案: テスト → 要求の方向が一般的です。ただし、この接続も有効です（要求からテストケースへの参照）。`;
-    }
-
-    return `ℹ️ 新しい接続を作成しました: ${sourceLabel} → ${targetLabel}`;
-  };
 
   // サジェスチョン承認
   const handleAcceptSuggestion = () => {
@@ -257,6 +273,7 @@ export const EditableKnowledgeGraph: React.FC<EditableKnowledgeGraphProps> = ({
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
+        connectionMode={ConnectionMode.Loose}
         fitView
         minZoom={0.3}
         maxZoom={1.5}
